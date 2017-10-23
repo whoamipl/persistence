@@ -1,6 +1,17 @@
+<<<<<<< HEAD
 # ignore all bin directories
 # matches "bin" in any subfolder
 bin/
+=======
+#maven rubish
+target/
+# use glob syntax.
+syntax: glob
+*.class
+*~
+*.bak
+*.old
+>>>>>>> 31a349fdd81fb5c7336850ef1521723b8d6393c7
 
 # ignore all target directories
 target/
@@ -10,10 +21,16 @@ target/
 
 # ignore eclipse directories and project files
 .settings/
+<<<<<<< HEAD
 .project
 .classpath
 
 # OSX
+=======
+.settings
+.classpath
+.project
+>>>>>>> 31a349fdd81fb5c7336850ef1521723b8d6393c7
 
 *.DS_Store
 .AppleDouble
