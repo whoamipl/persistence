@@ -13,10 +13,7 @@ public class Computer {
     private String gpu;
     private double price;
 
-    public Computer () {
-
-    }
-    public Computer(String model, int ram, String cpu, int hdd, String gpu) {
+    public Computer(String model, int ram, String cpu, int hdd, String gpu, double price) {
         this.model = model;
         this.ram = ram;
         this.cpu = cpu;
@@ -69,9 +66,10 @@ public class Computer {
     	this.price = price;
     }
     
-    public double getPrice(double pirce) {
+    public double getPrice() {
     	return this.price;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
