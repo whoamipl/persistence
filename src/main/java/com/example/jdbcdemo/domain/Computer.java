@@ -13,7 +13,10 @@ public class Computer {
     private String gpu;
     private double price;
 
-    public Computer(String model, int ram, String cpu, int hdd, String gpu, double price) {
+    public Computer() {
+
+    }
+    public Computer(String model, int ram, String cpu, int hdd, String gpu, double price ) {
         this.model = model;
         this.ram = ram;
         this.cpu = cpu;

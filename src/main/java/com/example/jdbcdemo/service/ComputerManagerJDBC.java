@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.jdbcdemo.domain.Computer;
@@ -21,6 +22,9 @@ public class ComputerManagerJDBC implements ComputerManager {
 	private PreparedStatement addComputerStmt;
 	private PreparedStatement deleteAllComputersStmt;
 	private PreparedStatement getAllComputersStmt;
+	private PreparedStatement updateComputerStmt;
+	private PreparedStatement getComputerByIdStmt;
+	private PreparedStatement deleteComputerById;
 
 	public ComputerManagerJDBC() {
 		try {
@@ -46,6 +50,12 @@ public class ComputerManagerJDBC implements ComputerManager {
 					.prepareStatement("DELETE FROM Computer");
 			getAllComputersStmt = connection
 					.prepareStatement("SELECT model, ram, cpu, hdd, gpu, price FROM Computer");
+			updateComputerStmt = connection.
+					prepareStatement("UPDATE Computer SET model = ? , ram = ?, cpu = ?, hdd = ?, gpu = ? , price = ? WHERE  id = ?");
+			getComputerByIdStmt = connection.
+					prepareStatement("SELECT model, ram, cpu, hdd, gpu, price FROM Computer WHERE id = ?");
+			deleteComputerById = connection.
+					prepareStatement("DELETE FROM Computer WHERE  id = ?");
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -66,7 +76,6 @@ public class ComputerManagerJDBC implements ComputerManager {
 			addComputerStmt.setString(5, computer.getGpu());
 			addComputerStmt.setDouble(6, computer.getPrice());
 			count = addComputerStmt.executeUpdate();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -76,15 +85,95 @@ public class ComputerManagerJDBC implements ComputerManager {
 
 	@Override
 	public List<Computer> getAllComputers() {
-		// TODO Auto-generated method stub
-		return null;
+
+		List<Computer> computers = new ArrayList<>();
+
+		try {
+
+			ResultSet rs = getAllComputersStmt.executeQuery();
+
+			while (rs.next()) {
+
+				Computer c = new Computer();
+				c.setModel(rs.getString("model"));
+				c.setCpu(rs.getString("cpu"));
+				c.setGpu(rs.getString("gpu"));
+				c.setHdd(rs.getInt("hdd"));
+				c.setRam(rs.getInt("ram"));
+				c.setPrice(rs.getDouble("price"));
+
+				computers.add(c);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return computers;
 	}
 
-	public void deleteComputer(int id) {
+	public int deleteComputer(int id)  {
 
+		int count = -1;
+		try {
+			deleteComputerById.setInt(1, id);
+			count = deleteComputerById.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return count;
 	}
 
-	public void updateComputer(int id) {
+	public int updateComputer(int id, Computer computer) {
+
+		int count = 0;
+		try {
+
+			updateComputerStmt.setString(1, computer.getModel());
+			updateComputerStmt.setInt(2, computer.getRam());
+			updateComputerStmt.setString(3, computer.getCpu());
+			updateComputerStmt.setInt(4, computer.getHdd());
+			updateComputerStmt.setString(5, computer.getGpu());
+			updateComputerStmt.setDouble(6, computer.getPrice());
+			updateComputerStmt.setInt(7,id);
+			count = updateComputerStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	public Computer getComputerById(int id) {
+
+		Computer c = null;
+
+		try {
+
+			getComputerByIdStmt.setInt(1, id);
+			ResultSet rs = getAllComputersStmt.executeQuery();
+
+			while (rs.next()) {
+
+				c = new Computer();
+				c.setModel(rs.getString("model"));
+				c.setCpu(rs.getString("cpu"));
+				c.setGpu(rs.getString("gpu"));
+				c.setHdd(rs.getInt("hdd"));
+				c.setRam(rs.getInt("ram"));
+				c.setPrice(rs.getDouble("price"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return c;
+	}
+
+	public int deleteAllComputers() {
+		int count = 0;
+		try {
+			count = deleteAllComputersStmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return count;
 
 	}
 	Connection getConnection() {
