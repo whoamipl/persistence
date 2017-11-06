@@ -1,3 +1,8 @@
+//TODO
+//1. Metody transakcyjne (UNIQE, NOT NULL,
+// a) batch update  - addAll, updat
+// b) ciąg różnych operacji
+//2. Test transakcyjności
 package com.example.jdbcdemo.service;
 
 import java.sql.Connection;
@@ -10,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.jdbcdemo.domain.Computer;
+import org.hsqldb.StatementManager;
 
 public class ComputerManagerJDBC implements ComputerManager {
 	
@@ -25,6 +31,7 @@ public class ComputerManagerJDBC implements ComputerManager {
 	private PreparedStatement updateComputerStmt;
 	private PreparedStatement getComputerByIdStmt;
 	private PreparedStatement deleteComputerById;
+	private PreparedStatement getLastInsertedId;
 
 	public ComputerManagerJDBC() {
 		try {
@@ -45,7 +52,8 @@ public class ComputerManagerJDBC implements ComputerManager {
 				statement.executeUpdate(createComputerTable);
 
 			addComputerStmt = connection
-					.prepareStatement("INSERT INTO Computer(model, ram, cpu, hdd, gpu, price) VALUES (?, ?, ?, ?, ?, ?)");
+					.prepareStatement("INSERT INTO Computer(model, ram, cpu, hdd, gpu, price) VALUES (?, ?, ?, ?, ?, ?)",
+                            Statement.RETURN_GENERATED_KEYS);
 			deleteAllComputersStmt = connection
 					.prepareStatement("DELETE FROM Computer");
 			getAllComputersStmt = connection
@@ -56,7 +64,8 @@ public class ComputerManagerJDBC implements ComputerManager {
 					prepareStatement("SELECT model, ram, cpu, hdd, gpu, price FROM Computer WHERE id = ?");
 			deleteComputerById = connection.
 					prepareStatement("DELETE FROM Computer WHERE  id = ?");
-
+            getLastInsertedId = connection.
+                    prepareStatement("CALL IDENTITY()");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,7 +74,7 @@ public class ComputerManagerJDBC implements ComputerManager {
 
 	@Override
 	public int addComputer(Computer computer) {
-
+        int id = -1;
 		int count = 0;
 		try {
 
@@ -76,18 +85,22 @@ public class ComputerManagerJDBC implements ComputerManager {
 			addComputerStmt.setString(5, computer.getGpu());
 			addComputerStmt.setDouble(6, computer.getPrice());
 			count = addComputerStmt.executeUpdate();
+            ResultSet rs = addComputerStmt.getGeneratedKeys();
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return count;
+		return id;
 	}
 
 	@Override
 	public List<Computer> getAllComputers() {
 
 		List<Computer> computers = new ArrayList<>();
-
 		try {
 
 			ResultSet rs = getAllComputersStmt.executeQuery();
@@ -127,11 +140,12 @@ public class ComputerManagerJDBC implements ComputerManager {
 		int count = 0;
 		try {
 
-			updateComputerStmt.setString(1, computer.getModel());
+            updateComputerStmt.setString(1, computer.getModel());
 			updateComputerStmt.setInt(2, computer.getRam());
 			updateComputerStmt.setString(3, computer.getCpu());
 			updateComputerStmt.setInt(4, computer.getHdd());
 			updateComputerStmt.setString(5, computer.getGpu());
+			updateComputerStmt.setDouble(6, computer.getPrice());
 			updateComputerStmt.setDouble(6, computer.getPrice());
 			updateComputerStmt.setInt(7,id);
 			count = updateComputerStmt.executeUpdate();
