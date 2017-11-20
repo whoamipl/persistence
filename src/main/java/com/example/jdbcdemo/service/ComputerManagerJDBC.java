@@ -1,6 +1,5 @@
 //TODO
 //1. Metody transakcyjne (UNIQE, NOT NULL,
-// a) batch update  - addAll, updat
 // b) ciąg różnych operacji
 //2. Test transakcyjności
 package com.example.jdbcdemo.service;
@@ -11,11 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import com.example.jdbcdemo.domain.Computer;
-import org.hsqldb.StatementManager;
+
+import javax.swing.text.html.HTMLDocument;
 
 public class ComputerManagerJDBC implements ComputerManager {
 	
@@ -189,6 +188,40 @@ public class ComputerManagerJDBC implements ComputerManager {
 		}
 		return count;
 
+	}
+
+	public int addFromCsv(String fileName) {
+	    return 0;
+    }
+
+    public int udpadePrices(double percent) {
+
+		HashMap<Long, Double> enries = new HashMap<>();
+		int count = 0;
+		try {
+			PreparedStatement getAllCompuer = connection.
+					prepareStatement("SELECT id, price FROM Computer;");
+			PreparedStatement update = connection.
+					prepareStatement("UPDATE Computer SET price = ? WHERE id = ?;");
+			ResultSet query = getAllCompuer.executeQuery();
+			while (query.next()) {
+				enries.put(query.getLong(1), query.getDouble(2));
+			}
+			connection.setAutoCommit(false);
+			Set entrySet = enries.entrySet();
+			Iterator iterator = entrySet.iterator();
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				update.setDouble(1,(Double)entry.getValue() * percent);
+				update.setLong(2, (Long) entry.getKey());
+				count += update.executeUpdate();
+			}
+			connection.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return 0;
 	}
 	Connection getConnection() {
 		return this.connection;

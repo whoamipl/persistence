@@ -2,6 +2,8 @@ package com.example.jdbcdemo.service;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.example.jdbcdemo.domain.Computer;
@@ -14,8 +16,8 @@ public class ComputerManagerTest {
 	Computer computerAdd = new Computer("Kabby", 1024, "Ryzen 7", 1, "GTX1060", 1999.99);
 	Computer computerUpdate = new Computer("Kabby", 4096, "Ryzen 7", 1, "GTX1080Ti", 1999.99);
 
-
-	@Test 
+	//@Befor @After
+	@Before
 	public void checkConnection() {
 		assertNotNull(computerManager.getConnection());
 	}
@@ -38,7 +40,6 @@ public class ComputerManagerTest {
 	@Test
 	public void checkUpdate() {
 
-
 		int id = computerManager.addComputer(computerAdd);
 		computerManager.updateComputer(id,computerUpdate);
 		assertEquals(computerManager.getComputerById(id).getCpu(), computerUpdate.getCpu());
@@ -56,8 +57,11 @@ public class ComputerManagerTest {
 		int id = 1;
 		assertEquals(computerManager.deleteComputer(id), 0, 1);
 	}
-
 	@Test
+	public void checkBatchUpdate() {
+		computerManager.udpadePrices(0.2);
+	}
+	@After
 	public void checkDeleteAllComputer() {
 		computerManager.deleteAllComputers();
 	}
