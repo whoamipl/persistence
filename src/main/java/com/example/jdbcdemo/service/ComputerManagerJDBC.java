@@ -223,10 +223,47 @@ public class ComputerManagerJDBC implements ComputerManager {
 
 		return 0;
 	}
+
 	Connection getConnection() {
 		return this.connection;
 	}
 
+	public void transactionalAddAndUpdate (Computer computerInsert, Computer computerUpdate) {
 
+		try {
+			int id = 0;
+			connection.setAutoCommit(false);
+			addComputerStmt.setString(1, computerInsert.getModel());
+			addComputerStmt.setInt(2, computerInsert.getRam());
+			addComputerStmt.setString(3, computerInsert.getCpu());
+			addComputerStmt.setInt(4, computerInsert.getHdd());
+			addComputerStmt.setString(5, computerInsert.getGpu());
+			addComputerStmt.setDouble(6, computerInsert.getPrice());
+			addComputerStmt.executeUpdate();
+			ResultSet rs = addComputerStmt.getGeneratedKeys();
+			if (rs.next()) {
+				id = rs.getInt(1);
+			}
+			updateComputerStmt.setString(1, computerUpdate.getModel());
+			updateComputerStmt.setInt(2, computerUpdate.getRam());
+			updateComputerStmt.setString(3, computerUpdate.getCpu());
+			updateComputerStmt.setInt(4, computerUpdate.getHdd());
+			updateComputerStmt.setString(5, computerUpdate.getGpu());
+			updateComputerStmt.setDouble(6, computerUpdate.getPrice());
+			updateComputerStmt.setDouble(6, computerUpdate.getPrice());
+			updateComputerStmt.setInt(7,id);
+			updateComputerStmt.executeUpdate();
+
+			connection.commit();
+			System.out.println("Done!");
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 
 }

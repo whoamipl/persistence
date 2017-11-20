@@ -3,6 +3,7 @@ package com.example.jdbcdemo.service;
 import static org.junit.Assert.*;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,6 +61,10 @@ public class ComputerManagerTest {
 	@Test
 	public void checkBatchUpdate() {
 		computerManager.udpadePrices(0.2);
+	}
+	@Test
+	public void checkAddAndUpdate() {
+		computerManager.transactionalAddAndUpdate(computerAdd,computerUpdate);
 	}
 	@After
 	public void checkDeleteAllComputer() {
