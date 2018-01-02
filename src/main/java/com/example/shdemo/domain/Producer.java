@@ -5,25 +5,24 @@ import java.util.List;
 
 public class Producer {
  @Id
- @GeneratedValue( strategy = GenerationType.IDENTITY)
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
  private long id;
 
  private String name;
- @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+ @OneToMany
  private List<Computer> producedComputers;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public Producer(String name) {
         this.name = name;
     }
 
-    public long getId() {
+    public String getName() { return name; }
 
-        return id;
+ public void setName(String name) {
+        this.name = name;
     }
+
+    public long getId() { return id; }
 
     public void setId(long id) {
         this.id = id;
