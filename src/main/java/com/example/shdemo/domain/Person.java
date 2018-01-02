@@ -20,7 +20,6 @@ public class Person {
 	private Date registrationDate = new Date();
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "id")
 	private List<Computer> computers = new ArrayList<Computer>();
 
 	@Id

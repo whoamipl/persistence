@@ -4,59 +4,39 @@ import javax.persistence.*;
 
 @Entity
 @NamedQueries({
-		@NamedQuery(name = "computer.unsold", query = "Select c from Computer c where c.sold = false")
+		@NamedQuery(name = "computer.unsold", query = "Select c from Computer c where c.sold = false"),
+		@NamedQuery(name = "computer.lastAdded", query = "select c.id from Computer c order by c.id desc")
 })
 public class Computer {
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String model;
 	private Boolean sold;
-//	@ManyToOne
-//rivate Person owner;
-//	@ManyToOne
-//rivate Producer producent;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
 
+	private Producer producer;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public Long getId() {
-		return id;
+	public Computer() {
+
 	}
-
 	public Computer(String producent, String model) {
 		this.model = model;
 		this.sold = false;
 	}
 
-	public Computer() {
+	public Long getId() { return id; }
 
-	}
+	public void setId(Long id) { this.id = id; }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	public String getModel() { return model; }
 
-	public String getModel() {
-		return model;
-	}
+	public void setModel(String model) { this.model = model; }
 
-	public void setModel(String model) {
-		this.model = model;
-	}
+	public Boolean getSold() { return sold; }
 
-	public Boolean getSold() {
-		return sold;
-	}
+	public void setSold(Boolean sold) { this.sold = sold; }
+	public Producer getProducer() { return producer; }
 
-	public void setSold(Boolean sold) {
-		this.sold = sold;
-	}
-
-//	public Person getOwner() { return owner; }
-//
-//	public void setOwner(Person owner) { this.owner = owner; }
-
-//	public Producer getProducent() { return producent; }
-//
-//	public void setProducent(Producer producent) { this.producent = producent; }
+	public void setProducer(Producer producer) { this.producer = producer; }
 }
